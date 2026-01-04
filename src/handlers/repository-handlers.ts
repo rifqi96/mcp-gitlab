@@ -307,3 +307,37 @@ export const replyToDiscussion: ToolHandler = async (params, context) => {
   
   return formatResponse(response.data);
 };
+
+/**
+ * List merge request notes handler
+ */
+export const listMergeRequestNotes: ToolHandler = async (params, context) => {
+  const { project_id, merge_request_iid } = params.arguments || {};
+  
+  if (!project_id || !merge_request_iid) {
+    throw new McpError(ErrorCode.InvalidParams, 'project_id and merge_request_iid are required');
+  }
+  
+  const response = await context.axiosInstance.get(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}/notes`
+  );
+  
+  return formatResponse(response.data);
+};
+
+/**
+ * List merge request discussions handler
+ */
+export const listMergeRequestDiscussions: ToolHandler = async (params, context) => {
+  const { project_id, merge_request_iid } = params.arguments || {};
+  
+  if (!project_id || !merge_request_iid) {
+    throw new McpError(ErrorCode.InvalidParams, 'project_id and merge_request_iid are required');
+  }
+  
+  const response = await context.axiosInstance.get(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}/discussions`
+  );
+  
+  return formatResponse(response.data);
+};

@@ -157,6 +157,28 @@ Add a reply to an existing discussion thread in a merge request. Use this to con
 | `discussion_id` | `string` | Yes | The ID of the discussion thread to reply to |
 | `body` | `string` | Yes | The content of the reply |
 
+### gitlab_list_merge_request_notes
+
+List all notes/comments on a merge request
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `project_id` | `string` | Yes | The ID or URL-encoded path of the project |
+| `merge_request_iid` | `number` | Yes | The internal ID of the merge request |
+
+### gitlab_list_merge_request_discussions
+
+List all discussion threads on a merge request (includes inline and general discussions)
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `project_id` | `string` | Yes | The ID or URL-encoded path of the project |
+| `merge_request_iid` | `number` | Yes | The internal ID of the merge request |
+
 ### gitlab_list_issues
 
 List issues in a GitLab project

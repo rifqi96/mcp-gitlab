@@ -314,6 +314,42 @@ export const toolDefinitions = [
     }
   },
   {
+    name: 'gitlab_list_merge_request_notes',
+    description: 'List all notes/comments on a merge request',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'The ID or URL-encoded path of the project'
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'The internal ID of the merge request'
+        }
+      },
+      required: ['project_id', 'merge_request_iid']
+    }
+  },
+  {
+    name: 'gitlab_list_merge_request_discussions',
+    description: 'List all discussion threads on a merge request (includes inline and general discussions)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'The ID or URL-encoded path of the project'
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'The internal ID of the merge request'
+        }
+      },
+      required: ['project_id', 'merge_request_iid']
+    }
+  },
+  {
     name: 'gitlab_list_issues',
     description: 'List issues in a GitLab project',
     inputSchema: {
@@ -972,7 +1008,7 @@ export const toolDefinitions = [
 ];
 
 // Export lists of tools by category for easier selection
-export const repositoryTools = toolDefinitions.slice(0, 12);
-export const integrationTools = toolDefinitions.slice(10, 20);
-export const cicdTools = toolDefinitions.slice(20, 31);
-export const usersGroupsTools = toolDefinitions.slice(31);
+export const repositoryTools = toolDefinitions.slice(0, 17);  // 17 repository tools (was 15, now 17)
+export const integrationTools = toolDefinitions.slice(17, 27);  // 10 integration tools
+export const cicdTools = toolDefinitions.slice(27, 38);  // 11 CI/CD tools
+export const usersGroupsTools = toolDefinitions.slice(38);  // 8 users/groups tools
