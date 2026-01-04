@@ -350,6 +350,32 @@ export const toolDefinitions = [
     }
   },
   {
+    name: 'gitlab_resolve_merge_request_discussion',
+    description: 'Resolve or unresolve a discussion thread in a merge request',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'The ID or URL-encoded path of the project'
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'The internal ID of the merge request'
+        },
+        discussion_id: {
+          type: 'string',
+          description: 'The ID of the discussion thread to resolve/unresolve'
+        },
+        resolved: {
+          type: 'boolean',
+          description: 'true to resolve the discussion, false to unresolve it'
+        }
+      },
+      required: ['project_id', 'merge_request_iid', 'discussion_id', 'resolved']
+    }
+  },
+  {
     name: 'gitlab_list_issues',
     description: 'List issues in a GitLab project',
     inputSchema: {
@@ -1008,7 +1034,7 @@ export const toolDefinitions = [
 ];
 
 // Export lists of tools by category for easier selection
-export const repositoryTools = toolDefinitions.slice(0, 17);  // 17 repository tools (was 15, now 17)
-export const integrationTools = toolDefinitions.slice(17, 27);  // 10 integration tools
-export const cicdTools = toolDefinitions.slice(27, 38);  // 11 CI/CD tools
-export const usersGroupsTools = toolDefinitions.slice(38);  // 8 users/groups tools
+export const repositoryTools = toolDefinitions.slice(0, 18);  // 18 repository tools (added list_notes, list_discussions, resolve_discussion)
+export const integrationTools = toolDefinitions.slice(18, 28);  // 10 integration tools
+export const cicdTools = toolDefinitions.slice(28, 39);  // 11 CI/CD tools
+export const usersGroupsTools = toolDefinitions.slice(39);  // 8 users/groups tools

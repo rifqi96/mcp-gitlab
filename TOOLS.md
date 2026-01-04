@@ -179,6 +179,19 @@ List all discussion threads on a merge request (includes inline and general disc
 | `project_id` | `string` | Yes | The ID or URL-encoded path of the project |
 | `merge_request_iid` | `number` | Yes | The internal ID of the merge request |
 
+### gitlab_resolve_merge_request_discussion
+
+Resolve or unresolve a discussion thread in a merge request
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `project_id` | `string` | Yes | The ID or URL-encoded path of the project |
+| `merge_request_iid` | `number` | Yes | The internal ID of the merge request |
+| `discussion_id` | `string` | Yes | The ID of the discussion thread to resolve/unresolve |
+| `resolved` | `boolean` | Yes | true to resolve the discussion, false to unresolve it |
+
 ### gitlab_list_issues
 
 List issues in a GitLab project

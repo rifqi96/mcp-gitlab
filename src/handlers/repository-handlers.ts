@@ -341,3 +341,21 @@ export const listMergeRequestDiscussions: ToolHandler = async (params, context) 
   
   return formatResponse(response.data);
 };
+
+/**
+ * Resolve merge request discussion handler
+ */
+export const resolveMergeRequestDiscussion: ToolHandler = async (params, context) => {
+  const { project_id, merge_request_iid, discussion_id, resolved } = params.arguments || {};
+  
+  if (!project_id || !merge_request_iid || !discussion_id || resolved === undefined) {
+    throw new McpError(ErrorCode.InvalidParams, 'project_id, merge_request_iid, discussion_id, and resolved are required');
+  }
+  
+  const response = await context.axiosInstance.put(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}/discussions/${encodeURIComponent(String(discussion_id))}`,
+    { resolved }
+  );
+  
+  return formatResponse(response.data);
+};
