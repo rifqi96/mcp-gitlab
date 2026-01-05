@@ -196,6 +196,186 @@ export const toolDefinitions = [
     }
   },
   {
+    name: 'gitlab_create_merge_request_discussion',
+    description: 'Create an inline comment/discussion on a specific line in a merge request. This is the full-featured version that requires commit SHAs.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'The ID or URL-encoded path of the project'
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'The internal ID of the merge request'
+        },
+        body: {
+          type: 'string',
+          description: 'The content of the comment'
+        },
+        position: {
+          type: 'object',
+          description: 'Position information for the inline comment',
+          properties: {
+            base_sha: {
+              type: 'string',
+              description: 'SHA of the base commit (parent of the MR)'
+            },
+            start_sha: {
+              type: 'string',
+              description: 'SHA of the start commit (where the MR starts)'
+            },
+            head_sha: {
+              type: 'string',
+              description: 'SHA of the head commit (latest commit in the MR)'
+            },
+            new_path: {
+              type: 'string',
+              description: 'Path to the file in the new version'
+            },
+            old_path: {
+              type: 'string',
+              description: 'Path to the file in the old version (same as new_path if not renamed)'
+            },
+            new_line: {
+              type: ['number', 'null'],
+              description: 'Line number in the new version (null if line was removed)'
+            },
+            old_line: {
+              type: ['number', 'null'],
+              description: 'Line number in the old version (null if line was added)'
+            }
+          },
+          required: ['base_sha', 'start_sha', 'head_sha', 'new_path', 'old_path']
+        }
+      },
+      required: ['project_id', 'merge_request_iid', 'body', 'position']
+    }
+  },
+  {
+    name: 'gitlab_create_merge_request_discussion_simple',
+    description: 'Create an inline comment on a specific line in a merge request (simplified version). Automatically fetches commit SHAs from the merge request.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'The ID or URL-encoded path of the project'
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'The internal ID of the merge request'
+        },
+        body: {
+          type: 'string',
+          description: 'The content of the comment'
+        },
+        file_path: {
+          type: 'string',
+          description: 'Path to the file to comment on'
+        },
+        line_number: {
+          type: 'number',
+          description: 'Line number to comment on'
+        },
+        line_type: {
+          type: 'string',
+          description: 'Type of line: "new" for added/modified lines, "old" for removed lines',
+          enum: ['new', 'old']
+        }
+      },
+      required: ['project_id', 'merge_request_iid', 'body', 'file_path', 'line_number', 'line_type']
+    }
+  },
+  {
+    name: 'gitlab_reply_to_discussion',
+    description: 'Add a reply to an existing discussion thread in a merge request. Use this to continue conversations on inline comments or general discussions.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'The ID or URL-encoded path of the project'
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'The internal ID of the merge request'
+        },
+        discussion_id: {
+          type: 'string',
+          description: 'The ID of the discussion thread to reply to'
+        },
+        body: {
+          type: 'string',
+          description: 'The content of the reply'
+        }
+      },
+      required: ['project_id', 'merge_request_iid', 'discussion_id', 'body']
+    }
+  },
+  {
+    name: 'gitlab_list_merge_request_notes',
+    description: 'List all notes/comments on a merge request',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'The ID or URL-encoded path of the project'
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'The internal ID of the merge request'
+        }
+      },
+      required: ['project_id', 'merge_request_iid']
+    }
+  },
+  {
+    name: 'gitlab_list_merge_request_discussions',
+    description: 'List all discussion threads on a merge request (includes inline and general discussions)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'The ID or URL-encoded path of the project'
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'The internal ID of the merge request'
+        }
+      },
+      required: ['project_id', 'merge_request_iid']
+    }
+  },
+  {
+    name: 'gitlab_resolve_merge_request_discussion',
+    description: 'Resolve or unresolve a discussion thread in a merge request',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'The ID or URL-encoded path of the project'
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'The internal ID of the merge request'
+        },
+        discussion_id: {
+          type: 'string',
+          description: 'The ID of the discussion thread to resolve/unresolve'
+        },
+        resolved: {
+          type: 'boolean',
+          description: 'true to resolve the discussion, false to unresolve it'
+        }
+      },
+      required: ['project_id', 'merge_request_iid', 'discussion_id', 'resolved']
+    }
+  },
+  {
     name: 'gitlab_list_issues',
     description: 'List issues in a GitLab project',
     inputSchema: {
@@ -854,7 +1034,7 @@ export const toolDefinitions = [
 ];
 
 // Export lists of tools by category for easier selection
-export const repositoryTools = toolDefinitions.slice(0, 12);
-export const integrationTools = toolDefinitions.slice(10, 20);
-export const cicdTools = toolDefinitions.slice(20, 31);
-export const usersGroupsTools = toolDefinitions.slice(31); 
+export const repositoryTools = toolDefinitions.slice(0, 18);  // 18 repository tools (added list_notes, list_discussions, resolve_discussion)
+export const integrationTools = toolDefinitions.slice(18, 28);  // 10 integration tools
+export const cicdTools = toolDefinitions.slice(28, 39);  // 11 CI/CD tools
+export const usersGroupsTools = toolDefinitions.slice(39);  // 8 users/groups tools

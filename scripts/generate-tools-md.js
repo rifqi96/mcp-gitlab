@@ -143,6 +143,7 @@ try {
       t.name.includes('project') || 
       t.name.includes('branch') || 
       t.name.includes('merge_request') || 
+      t.name.includes('discussion') || 
       t.name.includes('issue') || 
       t.name.includes('repository')),
     'Integrations & Webhooks': tools.filter(t => 

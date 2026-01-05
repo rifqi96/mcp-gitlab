@@ -30,6 +30,12 @@ export const toolRegistry: ToolRegistry = {
   gitlab_create_merge_request_note: repoHandlers.createMergeRequestNote,
   gitlab_create_merge_request_note_internal: repoHandlers.createMergeRequestNoteInternal,
   gitlab_update_merge_request: repoHandlers.updateMergeRequest,
+  gitlab_create_merge_request_discussion: repoHandlers.createMergeRequestDiscussion,
+  gitlab_create_merge_request_discussion_simple: repoHandlers.createMergeRequestDiscussionSimple,
+  gitlab_reply_to_discussion: repoHandlers.replyToDiscussion,
+  gitlab_list_merge_request_notes: repoHandlers.listMergeRequestNotes,
+  gitlab_list_merge_request_discussions: repoHandlers.listMergeRequestDiscussions,
+  gitlab_resolve_merge_request_discussion: repoHandlers.resolveMergeRequestDiscussion,
   gitlab_list_issues: repoHandlers.listIssues,
   gitlab_get_repository_file: repoHandlers.getRepositoryFile,
   gitlab_compare_branches: repoHandlers.compareBranches,
@@ -68,4 +74,4 @@ export const toolRegistry: ToolRegistry = {
   gitlab_add_group_member: usersGroupsHandlers.addGroupMember,
   gitlab_list_project_members: usersGroupsHandlers.listProjectMembers,
   gitlab_add_project_member: usersGroupsHandlers.addProjectMember
-}; 
+};

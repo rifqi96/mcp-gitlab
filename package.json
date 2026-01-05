@@ -18,10 +18,17 @@
     "install-hooks": "cp -f git-hooks/pre-commit .git/hooks/ && chmod +x .git/hooks/pre-commit"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.7.0",
-    "axios": "^1.8.3"
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "axios": "^1.8.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "i": "^0.3.7",
+    "npm": "^11.7.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^20.11.24",
     "typescript": "^5.3.3"
   }

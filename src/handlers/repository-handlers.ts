@@ -5,6 +5,7 @@
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import { ToolHandler } from "../utils/handler-types.js";
 import { formatResponse } from "../utils/response-formatter.js";
+import { DiscussionPosition, DiffRefs } from "../types/repository.types.js";
 
 /**
  * List projects handler
@@ -196,4 +197,165 @@ export const createMergeRequestNoteInternal: ToolHandler = async (params, contex
     { body, internal: internal === true }
   );
   return formatResponse(response.data);
-}; 
+};
+
+/**
+ * Create merge request discussion (inline comment) handler
+ */
+export const createMergeRequestDiscussion: ToolHandler = async (params, context) => {
+  const args = params.arguments || {};
+  const { project_id, merge_request_iid, body, position } = args;
+  
+  if (!project_id || !merge_request_iid || !body || !position) {
+    throw new McpError(ErrorCode.InvalidParams, 'project_id, merge_request_iid, body, and position are required');
+  }
+  
+  // Type guard: ensure position is an object with required properties
+  const positionData = position as DiscussionPosition;
+  const { base_sha, start_sha, head_sha, new_path, old_path } = positionData;
+  
+  if (!base_sha || !start_sha || !head_sha || !new_path || !old_path) {
+    throw new McpError(
+      ErrorCode.InvalidParams, 
+      'position must include base_sha, start_sha, head_sha, new_path, and old_path'
+    );
+  }
+  
+  const response = await context.axiosInstance.post(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}/discussions`,
+    {
+      body,
+      position: {
+        ...positionData,
+        position_type: 'text'
+      }
+    }
+  );
+  return formatResponse(response.data);
+};
+
+/**
+ * Create merge request discussion (inline comment) handler - simplified version
+ * Automatically fetches commit SHAs from the merge request
+ */
+export const createMergeRequestDiscussionSimple: ToolHandler = async (params, context) => {
+  const { project_id, merge_request_iid, body, file_path, line_number, line_type } = params.arguments || {};
+  
+  if (!project_id || !merge_request_iid || !body || !file_path || !line_number || !line_type) {
+    throw new McpError(
+      ErrorCode.InvalidParams, 
+      'project_id, merge_request_iid, body, file_path, line_number, and line_type are required'
+    );
+  }
+  
+  // Validate line_type
+  if (line_type !== 'new' && line_type !== 'old') {
+    throw new McpError(ErrorCode.InvalidParams, 'line_type must be either "new" or "old"');
+  }
+  
+  // First, fetch the merge request details to get diff_refs
+  const mrResponse = await context.axiosInstance.get(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}`
+  );
+  
+  const diffRefs = mrResponse.data.diff_refs;
+  if (!diffRefs) {
+    throw new McpError(
+      ErrorCode.InternalError, 
+      'Could not retrieve diff_refs from merge request. The MR may not have any commits yet.'
+    );
+  }
+  
+  // Construct the position object
+  const position = {
+    base_sha: diffRefs.base_sha,
+    start_sha: diffRefs.start_sha,
+    head_sha: diffRefs.head_sha,
+    position_type: 'text',
+    new_path: file_path,
+    old_path: file_path,
+    new_line: line_type === 'new' ? line_number : null,
+    old_line: line_type === 'old' ? line_number : null
+  };
+  
+  // Create the discussion
+  const response = await context.axiosInstance.post(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}/discussions`,
+    { body, position }
+  );
+  
+  return formatResponse(response.data);
+};
+
+/**
+ * Reply to an existing discussion thread handler
+ */
+export const replyToDiscussion: ToolHandler = async (params, context) => {
+  const { project_id, merge_request_iid, discussion_id, body } = params.arguments || {};
+  
+  if (!project_id || !merge_request_iid || !discussion_id || !body) {
+    throw new McpError(
+      ErrorCode.InvalidParams, 
+      'project_id, merge_request_iid, discussion_id, and body are required'
+    );
+  }
+  
+  const response = await context.axiosInstance.post(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}/discussions/${encodeURIComponent(String(discussion_id))}/notes`,
+    { body }
+  );
+  
+  return formatResponse(response.data);
+};
+
+/**
+ * List merge request notes handler
+ */
+export const listMergeRequestNotes: ToolHandler = async (params, context) => {
+  const { project_id, merge_request_iid } = params.arguments || {};
+  
+  if (!project_id || !merge_request_iid) {
+    throw new McpError(ErrorCode.InvalidParams, 'project_id and merge_request_iid are required');
+  }
+  
+  const response = await context.axiosInstance.get(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}/notes`
+  );
+  
+  return formatResponse(response.data);
+};
+
+/**
+ * List merge request discussions handler
+ */
+export const listMergeRequestDiscussions: ToolHandler = async (params, context) => {
+  const { project_id, merge_request_iid } = params.arguments || {};
+  
+  if (!project_id || !merge_request_iid) {
+    throw new McpError(ErrorCode.InvalidParams, 'project_id and merge_request_iid are required');
+  }
+  
+  const response = await context.axiosInstance.get(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}/discussions`
+  );
+  
+  return formatResponse(response.data);
+};
+
+/**
+ * Resolve merge request discussion handler
+ */
+export const resolveMergeRequestDiscussion: ToolHandler = async (params, context) => {
+  const { project_id, merge_request_iid, discussion_id, resolved } = params.arguments || {};
+  
+  if (!project_id || !merge_request_iid || !discussion_id || resolved === undefined) {
+    throw new McpError(ErrorCode.InvalidParams, 'project_id, merge_request_iid, discussion_id, and resolved are required');
+  }
+  
+  const response = await context.axiosInstance.put(
+    `/projects/${encodeURIComponent(String(project_id))}/merge_requests/${merge_request_iid}/discussions/${encodeURIComponent(String(discussion_id))}`,
+    { resolved }
+  );
+  
+  return formatResponse(response.data);
+};

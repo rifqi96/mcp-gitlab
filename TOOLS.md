@@ -112,6 +112,86 @@ Update a merge request title and description
 | `title` | `string` | No | The title of the merge request |
 | `description` | `string` | No | The description of the merge request |
 
+### gitlab_create_merge_request_discussion
+
+Create an inline comment/discussion on a specific line in a merge request. This is the full-featured version that requires commit SHAs.
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `project_id` | `string` | No | The ID or URL-encoded path of the project |
+| `merge_request_iid` | `number` | No | The internal ID of the merge request |
+| `body` | `string` | No | The content of the comment |
+| `position` | `object` | No | Position information for the inline comment |
+| `start_sha` | `string` | Yes | SHA of the start commit (where the MR starts) |
+| `head_sha` | `string` | Yes | SHA of the head commit (latest commit in the MR) |
+| `new_path` | `string` | Yes | Path to the file in the new version |
+| `old_path` | `string` | Yes | Path to the file in the old version (same as new_path if not renamed) |
+
+### gitlab_create_merge_request_discussion_simple
+
+Create an inline comment on a specific line in a merge request (simplified version). Automatically fetches commit SHAs from the merge request.
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `project_id` | `string` | Yes | The ID or URL-encoded path of the project |
+| `merge_request_iid` | `number` | Yes | The internal ID of the merge request |
+| `body` | `string` | Yes | The content of the comment |
+| `file_path` | `string` | Yes | Path to the file to comment on |
+| `line_number` | `number` | Yes | Line number to comment on |
+| `line_type` | `string` | Yes | Type of line:  |
+
+### gitlab_reply_to_discussion
+
+Add a reply to an existing discussion thread in a merge request. Use this to continue conversations on inline comments or general discussions.
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `project_id` | `string` | Yes | The ID or URL-encoded path of the project |
+| `merge_request_iid` | `number` | Yes | The internal ID of the merge request |
+| `discussion_id` | `string` | Yes | The ID of the discussion thread to reply to |
+| `body` | `string` | Yes | The content of the reply |
+
+### gitlab_list_merge_request_notes
+
+List all notes/comments on a merge request
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `project_id` | `string` | Yes | The ID or URL-encoded path of the project |
+| `merge_request_iid` | `number` | Yes | The internal ID of the merge request |
+
+### gitlab_list_merge_request_discussions
+
+List all discussion threads on a merge request (includes inline and general discussions)
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `project_id` | `string` | Yes | The ID or URL-encoded path of the project |
+| `merge_request_iid` | `number` | Yes | The internal ID of the merge request |
+
+### gitlab_resolve_merge_request_discussion
+
+Resolve or unresolve a discussion thread in a merge request
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+| `project_id` | `string` | Yes | The ID or URL-encoded path of the project |
+| `merge_request_iid` | `number` | Yes | The internal ID of the merge request |
+| `discussion_id` | `string` | Yes | The ID of the discussion thread to resolve/unresolve |
+| `resolved` | `boolean` | Yes | true to resolve the discussion, false to unresolve it |
+
 ### gitlab_list_issues
 
 List issues in a GitLab project
